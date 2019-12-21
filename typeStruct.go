@@ -11,3 +11,6 @@ type TypeStruct struct {
 	valueType *TypeStruct
 	fieldLst  *TypeStruct
 }
+
+type Type interface {
+}

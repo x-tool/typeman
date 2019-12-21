@@ -1,4 +1,5 @@
-package core
+package typeman
+
 
 import (
 	"bytes"
