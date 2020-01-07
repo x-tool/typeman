@@ -1,6 +1,5 @@
 package typeman
 
-
 import (
 	"bytes"
 	"encoding/binary"
@@ -89,7 +88,7 @@ func (d *StructField) String(value *reflect.Value) (s string) {
 func (f *StructField) Parse(b []byte, valueptr reflect.Value) (err error) {
 	rType := valueptr.Type()
 	Errfunc := func(s string) error {
-		return fmt.Errorf("can't parse field: %v in %v, use value type: '%v', %v", f.name, f.odmStruct.name, rType.Kind(), s)
+		return fmt.Errorf("can't parse field: %v in %v, use value type: '%v', %v", f.name, f.RootField.name, rType.Kind(), s)
 	}
 	if rType.Kind() != reflect.Ptr {
 		return Errfunc("should use ptr to set value")

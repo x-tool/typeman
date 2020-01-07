@@ -5,7 +5,7 @@ import (
 )
 
 type StructField struct {
-	odmStruct   *odmStruct
+	RootField   *RootField
 	name        string
 	sourceType  reflect.Type
 	kind        Kind
@@ -46,7 +46,7 @@ func (d *StructField) isGroupType() (b bool) {
 	return d.kind.isGroupType()
 }
 
-func newStructField(_odmStruct *odmStruct, d *StructFieldLst, t *reflect.StructField, parent *StructField) {
+func newStructField(_RootField *RootField, d *StructFieldLst, t *reflect.StructField, parent *StructField) {
 	fieldType := *t
 	reflectType := fieldType.Type
 	tag := fieldType.Tag.Get(tagName)
@@ -56,7 +56,7 @@ func newStructField(_odmStruct *odmStruct, d *StructFieldLst, t *reflect.StructF
 	var _logicDependLst dependLst
 
 	field := &StructField{
-		odmStruct:      _odmStruct,
+		RootField:      _RootField,
 		name:           t.Name,
 		sourceType:     reflectType,
 		kind:           kind,
@@ -108,13 +108,13 @@ func newStructField(_odmStruct *odmStruct, d *StructFieldLst, t *reflect.StructF
 		count := _fieldType.NumField()
 		for i := 0; i < count; i++ {
 			_f := _fieldType.Field(i)
-			newStructField(_odmStruct, d, &_f, field)
+			newStructField(_RootField, d, &_f, field)
 		}
 	case Struct:
 		count := fieldType.Type.NumField()
 		for i := 0; i < count; i++ {
 			_f := fieldType.Type.Field(i)
-			newStructField(_odmStruct, d, &_f, field)
+			newStructField(_RootField, d, &_f, field)
 		}
 
 	}

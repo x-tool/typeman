@@ -16,7 +16,7 @@ type RootField struct {
 }
 type RootFieldLst []*RootField
 
-func newRootField(i interface{}) (_RootField *RootField) {
+func newRootField(i interface{}, conf Config) (_RootField *RootField) {
 
 	// append RootField.Fields
 	_RootFieldSourceT := reflect.TypeOf(i)
