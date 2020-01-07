@@ -19,14 +19,14 @@ var (
 // `xodm:"@sign"`
 type odmTag struct {
 	sourceTag string
-	mark      string // find docfield quick by custom string
+	mark      string // find docField quick by custom string
 	notNull   bool
 	// if value not null use default value, defalut value get from string, so must change type and cover in reflect.Value
 	defaultValue func() interface{}
 	lst          map[string]string
 }
 
-func newTag(s string, field *StructField) *odmTag {
+func newTag(s string, Field *Field) *odmTag {
 	_o := &odmTag{}
 	_o.lst = make(map[string]string)
 	_s := strings.TrimSpace(s)
@@ -36,25 +36,25 @@ func newTag(s string, field *StructField) *odmTag {
 		if v == "" {
 			continue
 		}
-		fieldLst := strings.Split(v, tagItemSeparator)
-		fieldLstLen := len(fieldLst)
+		FieldLst := strings.Split(v, tagItemSeparator)
+		FieldLstLen := len(FieldLst)
 		var name string
 		var value string
 		// tagMark value like @xxx, so format it diffrent with other
-		if fieldLstLen == 1 {
-			var _str = fieldLst[0]
+		if FieldLstLen == 1 {
+			var _str = FieldLst[0]
 			switch {
 			// notnull
 			case _str == "notnull":
 				_o.notNull = true
 				// @xxx
 			case strings.Index(_str, tagMark) == 0:
-				_o.mark = string([]rune(fieldLst[0])[1:])
+				_o.mark = string([]rune(FieldLst[0])[1:])
 			}
 			continue
 		}
-		name = strings.TrimSpace(fieldLst[0])
-		value = strings.TrimSpace(fieldLst[1])
+		name = strings.TrimSpace(FieldLst[0])
+		value = strings.TrimSpace(FieldLst[1])
 		if name == tagDefault {
 			var FuncIndex = strings.LastIndexAny(value, tagFunc)
 			var isFunc = FuncIndex == len(value)-len(tagFunc)
@@ -63,8 +63,8 @@ func newTag(s string, field *StructField) *odmTag {
 				_o.defaultValue = customTypeBox.defaultFuncMap[funcName]
 			} else {
 				_o.defaultValue = func() interface{} {
-					newValue := reflect.New(field.sourceType)
-					_ = field.Parse([]byte(value), newValue)
+					newValue := reflect.New(Field.sourceType)
+					_ = Field.Parse([]byte(value), newValue)
 					return newValue.Interface()
 				}
 			}

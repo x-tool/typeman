@@ -9,7 +9,7 @@ type TypeStruct struct {
 	// use for group type
 	keyType   *TypeStruct
 	valueType *TypeStruct
-	fieldLst  *TypeStruct
+	FieldLst  *TypeStruct
 }
 
 type Type interface {

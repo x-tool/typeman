@@ -7,60 +7,56 @@ import (
 	"github.com/x-tool/tool"
 )
 
-type odmStruct struct {
-	name string
+type RootField struct {
 	path string
-	// parent          *StructField
-	fields          StructFieldLst
-	rootFields      StructFieldLst
-	sourceType      *reflect.Type
+	StructField
 	interfaceFields map[string]*StructField
-	fieldMarkMap    map[string]*StructField
-	fieldNameMap    map[string]StructFieldLst
+	FieldMarkMap    map[string]*StructField
+	FieldNameMap    map[string]StructFieldLst
 }
-type odmStructLst []*odmStruct
+type RootFieldLst []*RootField
 
-func newOdmStruct(i interface{}) (_odmStruct *odmStruct) {
+func newRootField(i interface{}) (_RootField *RootField) {
 
-	// append odmStruct.fields
-	_odmStructSourceT := reflect.TypeOf(i)
-	odmStructSourceT := _odmStructSourceT.Elem()
-	_odmStruct = &odmStruct{
-		name:       odmStructSourceT.Name(),
-		path:       odmStructSourceT.PkgPath(),
-		allName:    allName(odmStructSourceT),
-		sourceType: &odmStructSourceT,
+	// append RootField.Fields
+	_RootFieldSourceT := reflect.TypeOf(i)
+	RootFieldSourceT := _RootFieldSourceT.Elem()
+	_RootField = &StructField{
+		name:       RootFieldSourceT.Name(),
+		path:       RootFieldSourceT.PkgPath(),
+		allName:    allName(RootFieldSourceT),
+		sourceType: &RootFieldSourceT,
 	}
-	fields := newStructFieldLst(_odmStruct, odmStructSourceT)
-	_odmStruct.fields = *fields
-	_odmStruct.fieldMarkMap = makeStructFieldLstMarkMap(_odmStruct)
-	_odmStruct.fieldNameMap = makeStructFieldLstNameMap(_odmStruct)
-	_odmStruct.rootFields = makerootFieldNameMap(_odmStruct)
-	_odmStruct.interfaceFields = makeInterfaceFields(_odmStruct)
+	Fields := newFieldLst(_RootField, RootFieldSourceT)
+	_RootField.Fields = *Fields
+	_RootField.FieldMarkMap = makeFieldLstMarkMap(_RootField)
+	_RootField.FieldNameMap = makeFieldLstNameMap(_RootField)
+	_RootField.RootFields = makeRootFieldNameMap(_RootField)
+	_RootField.interfaceFields = makeInterfaceFields(_RootField)
 	return
 }
 
-func newStructFieldLst(d *odmStruct, odmStructSourceT reflect.Type) *StructFieldLst {
-	var lst StructFieldLst
-	if odmStructSourceT.Kind() == reflect.Struct {
-		cont := odmStructSourceT.NumField()
+func newFieldLst(d *RootField, RootFieldSourceT reflect.Type) *FieldLst {
+	var lst FieldLst
+	if RootFieldSourceT.Kind() == reflect.Struct {
+		cont := RootFieldSourceT.NumField()
 		for i := 0; i < cont; i++ {
-			field := odmStructSourceT.Field(i)
+			Field := RootFieldSourceT.Field(i)
 			// addFieldsLock.Add(1)
-			// go newStructFieldLst(d, &lst, &field, nil)
-			newStructField(d, &lst, &field, nil)
+			// go newFieldLst(d, &lst, &Field, nil)
+			newField(d, &lst, &Field, nil)
 		}
 		// check Fields Name, Can't both same name in one Col
-		// odmStruct.checkFieldsName()
+		// RootField.checkFieldsName()
 	} else {
-		tool.Panic("DB", errors.New("odmStruct type is "+odmStructSourceT.Kind().String()+"!,Type should be Struct"))
+		tool.Panic("DB", errors.New("RootField type is "+RootFieldSourceT.Kind().String()+"!,Type should be Struct"))
 	}
 	// addFieldsLock.Wait()
 	return &lst
 }
 
-func makeStructFieldLstMarkMap(d *odmStruct) (m map[string]*StructField) {
-	_d := d.fields
+func makeFieldLstMarkMap(d *RootField) (m map[string]*Field) {
+	_d := d.Fields
 	for _, v := range _d {
 		tagPtr := v.odmTag.mark
 		if tagPtr != "" {
@@ -70,14 +66,14 @@ func makeStructFieldLstMarkMap(d *odmStruct) (m map[string]*StructField) {
 	return m
 }
 
-func makeStructFieldLstNameMap(d *odmStruct) map[string]StructFieldLst {
-	_d := d.fields
-	var _map = make(map[string]StructFieldLst)
+func makeFieldLstNameMap(d *RootField) map[string]FieldLst {
+	_d := d.Fields
+	var _map = make(map[string]FieldLst)
 	for _, v := range _d {
 		name := v.Name()
 		// new m[name]
 		if _, ok := _map[name]; !ok {
-			var temp StructFieldLst
+			var temp FieldLst
 			_map[name] = temp
 		}
 		_map[name] = append(_map[name], v)
@@ -85,8 +81,8 @@ func makeStructFieldLstNameMap(d *odmStruct) map[string]StructFieldLst {
 	return _map
 }
 
-func makerootFieldNameMap(d *odmStruct) (lst []*StructField) {
-	_d := d.fields
+func makeRootFieldNameMap(d *RootField) (lst []*Field) {
+	_d := d.Fields
 	for _, v := range _d {
 		if v.logicParent == nil && v.isAnonymous() == false {
 			lst = append(lst, v)
@@ -95,8 +91,8 @@ func makerootFieldNameMap(d *odmStruct) (lst []*StructField) {
 	return
 }
 
-func makeInterfaceFields(d *odmStruct) (lst map[string]*StructField) {
-	for _, v := range d.fields {
+func makeInterfaceFields(d *RootField) (lst map[string]*Field) {
+	for _, v := range d.Fields {
 		if _, ok := lst[v.name]; !ok {
 			if v.Kind() == Interface {
 				lst[v.name] = v

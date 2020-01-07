@@ -28,6 +28,8 @@ const (
 	IP
 	// uuid
 	Uuid
+	// Async
+	Async
 	// any
 	Any
 )

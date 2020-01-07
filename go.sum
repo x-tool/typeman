@@ -1,0 +1,4 @@
+github.com/x-tool/console v0.0.0-20171023080411-70b10059cbdc h1:kLlD2RlZg2AXojkIbZksuokFyeTwk5tMxtUMJHLljVc=
+github.com/x-tool/console v0.0.0-20171023080411-70b10059cbdc/go.mod h1:mt5Ey7sx8NjKSaQuVN8sxcCEE24WAu5zVGnJCKvMt14=
+github.com/x-tool/tool v0.0.0-20181205154000-ed8214801e33 h1:aaNhuToFQduKHiwoxqFjIxRIaCocjtkN+v2B5BlGKnw=
+github.com/x-tool/tool v0.0.0-20181205154000-ed8214801e33/go.mod h1:bwJVefI46r0BmZDmsteG7+a8lV+1/DspbSVolfF0FWM=
