@@ -7,9 +7,16 @@ import (
 	"github.com/x-tool/tool"
 )
 
+type Config struct {
+	IsValid func(i interface{}) bool
+	Doc     string
+	sign    map[interface{}]interface{}
+}
+
 type RootField struct {
 	path string
 	StructField
+	isAsyncType     bool // is format type from String
 	interfaceFields map[string]*StructField
 	FieldMarkMap    map[string]*StructField
 	FieldNameMap    map[string]StructFieldLst
@@ -20,15 +27,18 @@ func newRootField(i interface{}, conf Config) (_RootField *RootField) {
 
 	// append RootField.Fields
 	_RootFieldSourceT := reflect.TypeOf(i)
+	isAsyncType := _RootFieldSourceT.Kind()
 	RootFieldSourceT := _RootFieldSourceT.Elem()
 	_RootField = &StructField{
-		name:       RootFieldSourceT.Name(),
-		path:       RootFieldSourceT.PkgPath(),
+		name: RootFieldSourceT.Name(),
+
 		allName:    allName(RootFieldSourceT),
 		sourceType: &RootFieldSourceT,
 	}
 	Fields := newFieldLst(_RootField, RootFieldSourceT)
 	_RootField.Fields = *Fields
+isAsyncType:
+	isAsyncType
 	_RootField.FieldMarkMap = makeFieldLstMarkMap(_RootField)
 	_RootField.FieldNameMap = makeFieldLstNameMap(_RootField)
 	_RootField.RootFields = makeRootFieldNameMap(_RootField)

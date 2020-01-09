@@ -5,7 +5,7 @@ import (
 )
 
 type StructField struct {
-	RootField   *RootField
+	parent      *RootField
 	name        string
 	sourceType  reflect.Type
 	kind        Kind

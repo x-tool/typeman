@@ -1,11 +1,5 @@
 package typeman
 
-type Config struct {
-	IsValid func(i interface{}) bool
-	Doc     string
-	sign    map[interface{}]interface{}
-}
-
 type TypeManager struct {
 	typeLst []*RootField
 }
