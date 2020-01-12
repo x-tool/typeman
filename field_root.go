@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	isAsync bool
 	IsValid func(i interface{}) bool
 	Doc     string
 	sign    map[interface{}]interface{}
@@ -23,16 +24,14 @@ type RootField struct {
 }
 type RootFieldLst []*RootField
 
-func newRootField(i interface{}, conf Config) (_RootField *RootField) {
+func newRootField(i interface{}, conf Config) (_RootField *RootField, err error) {
 
 	// append RootField.Fields
 	_RootFieldSourceT := reflect.TypeOf(i)
 	isAsyncType := _RootFieldSourceT.Kind()
 	RootFieldSourceT := _RootFieldSourceT.Elem()
 	_RootField = &StructField{
-		name: RootFieldSourceT.Name(),
-
-		allName:    allName(RootFieldSourceT),
+		name:       RootFieldSourceT.Name(),
 		sourceType: &RootFieldSourceT,
 	}
 	Fields := newFieldLst(_RootField, RootFieldSourceT)
