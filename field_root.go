@@ -26,21 +26,14 @@ type RootFieldLst []*RootField
 
 func newRootField(i interface{}, conf Config) (_RootField *RootField, err error) {
 
-	// append RootField.Fields
 	_RootFieldSourceT := reflect.TypeOf(i)
-	isAsyncType := _RootFieldSourceT.Kind()
 	RootFieldSourceT := _RootFieldSourceT.Elem()
-	_RootField = &StructField{
-		name:       RootFieldSourceT.Name(),
-		sourceType: &RootFieldSourceT,
-	}
+
 	Fields := newFieldLst(_RootField, RootFieldSourceT)
 	_RootField.Fields = *Fields
-isAsyncType:
-	isAsyncType
+	_RootField.isAsyncType = _RootFieldSourceT.Kind() == reflect.String // is format type from String
 	_RootField.FieldMarkMap = makeFieldLstMarkMap(_RootField)
 	_RootField.FieldNameMap = makeFieldLstNameMap(_RootField)
-	_RootField.RootFields = makeRootFieldNameMap(_RootField)
 	_RootField.interfaceFields = makeInterfaceFields(_RootField)
 	return
 }
@@ -88,16 +81,6 @@ func makeFieldLstNameMap(d *RootField) map[string]FieldLst {
 		_map[name] = append(_map[name], v)
 	}
 	return _map
-}
-
-func makeRootFieldNameMap(d *RootField) (lst []*Field) {
-	_d := d.Fields
-	for _, v := range _d {
-		if v.logicParent == nil && v.isAnonymous() == false {
-			lst = append(lst, v)
-		}
-	}
-	return
 }
 
 func makeInterfaceFields(d *RootField) (lst map[string]*Field) {

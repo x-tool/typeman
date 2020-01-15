@@ -16,11 +16,9 @@ type StructField struct {
 	childLst      StructFieldLst
 	complexParent *StructField // the nearest complex parent field, use for check field path quick
 	parent        *StructField // field golang stack parent real
-	dependLst     dependLst    // depend chain, include self
 	// fields relastion with logic struct
-	logicChildLst  StructFieldLst
-	logicParent    *StructField // field Handle parent
-	logicDependLst dependLst    // depend chain, include self
+	logicChildLst StructFieldLst
+	logicParent   *StructField // field Handle parent
 }
 
 func (d *StructField) Name() string {
